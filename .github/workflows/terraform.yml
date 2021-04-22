@@ -1,0 +1,60 @@
+---
+name: CI/CD
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 1 * *'
+
+env:
+  AWS_DEFAULT_REGION: us-west-2
+
+jobs:
+  terraform_validate:
+    name: Terraform Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1.3.2
+
+      - name: Terraform init
+        run: |
+          terraform init
+
+      - name: Terraform validate
+        run: |
+          terraform validate
+
+      - name: Terraform formatting check
+        run: |
+          terraform fmt -check -recursive
+
+  checkov-job:
+    runs-on: ubuntu-latest
+    name: Checkov Static Analysis
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@master
+
+      - name: Run Checkov action
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+#          check: CKV_AWS_1 # optional: run only a specific check_id. can be comma separated list
+          # Skipping:
+          #  - CKV_AWS_18 -- "Ensure the S3 bucket has access logging enabled"
+          #  - CKV_AWS_52 -- "Ensure S3 bucket has MFA delete enabled"
+          #  - CKV_AWS_8 --- "Ensure all data stored in the Launch configuration EBS is securely encrypted"
+          #  - CKV_AWS_79 -- "Needs to be v1 otherwise HA doesn't function"
+          #  - CKV_AWS_144 - "Ensure that S3 bucket has cross-region replication enabled"
+          #  - CKV_AWS_145 - "Ensure that S3 buckets are encrypted with KMS by default"
+          skip_check: CKV_AWS_52,CKV_AWS_18,CKV_AWS_8,CKV_AWS_79,CKV_AWS_144,CKV_AWS_145 # optional: skip a specific check_id. can be comma separated list
+#          quiet: true # optional: display only failed checks
+#          soft_fail: true # optional: do not return an error code if there are failed checks
+#          framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
+#          output_format: json # optional: the output format, one of: cli, json, junitxml, github_failed_only
