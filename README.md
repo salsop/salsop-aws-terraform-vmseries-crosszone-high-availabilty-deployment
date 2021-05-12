@@ -1,6 +1,6 @@
 ![Support:Community](https://img.shields.io/badge/Support-Community-blue)
 ![License:MIT](https://img.shields.io/badge/License-MIT-blue)
-![CI/CD](https://github.com/salsop/aws-terraform-vmseries-crosszone-high-availabilty-deployment/workflows/CI/CD/badge.svg)
+[![CI/CD](https://github.com/salsop/salsop-aws-terraform-vmseries-crosszone-high-availabilty-deployment/actions/workflows/terraform.yml/badge.svg)](https://github.com/salsop/salsop-aws-terraform-vmseries-crosszone-high-availabilty-deployment/actions/workflows/terraform.yml)
 
 # AWS Cross-Zone High Availability Deployment
 
